@@ -7,7 +7,7 @@
 package com.moon.moon_api.config;
 
 
-import com.moon.constants.RabbitConstant;
+import com.moon.moon_commons.entity.constants.RabbitConstant;
 import org.springframework.amqp.core.*;
 import org.springframework.amqp.rabbit.config.SimpleRabbitListenerContainerFactory;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;

@@ -1,4 +1,4 @@
-package com.moon.constants;
+package com.moon.moon_commons.entity.constants;
 
 /**
  * @ClassName RabbitConstant

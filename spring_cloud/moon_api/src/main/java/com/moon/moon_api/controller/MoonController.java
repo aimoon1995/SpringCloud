@@ -1,9 +1,14 @@
 package com.moon.moon_api.controller;
 
 import com.alibaba.fastjson.JSONObject;
+import com.moon.moon_api.service.MoonService;
 import com.moon.moon_commons.entity.OrderTimeFareItem;
+import com.moon.moon_commons.util.ResponseBean;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -18,6 +23,9 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 public class MoonController {
 
+    @Autowired
+    private MoonService moonService;
+
     @RequestMapping("/info")
     public OrderTimeFareItem getMoon () {
         OrderTimeFareItem orderTimeFareItem = new OrderTimeFareItem();
@@ -27,5 +35,19 @@ public class MoonController {
         return orderTimeFareItem;
     }
 
+
+    /**
+     * @param pageSize
+     * @param pageNum
+     * @return com.moon.moon_commons.util.ResponseBean
+     * @Author zyl
+     * @Description 分页查询
+     * @Date 2021/4/21
+     **/
+    @GetMapping("/list")
+    public ResponseBean list(@RequestParam(required = false,defaultValue = "10") Integer pageSize,
+                             @RequestParam(required = false,defaultValue = "0") Integer pageNum){
+        return moonService.list(pageSize,pageNum);
+    }
 
 }

@@ -1,6 +1,6 @@
 package com.moon.moon_api.mq.provider;
 
-import com.moon.constants.RabbitConstant;
+import com.moon.moon_commons.entity.constants.RabbitConstant;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.MessageDeliveryMode;
 import org.springframework.amqp.rabbit.connection.CorrelationData;
