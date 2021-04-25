@@ -1,13 +1,8 @@
-/**
- * @Description:
- * @Author: ywang
- * @Date: 2019/5/21 8:26 PM
- */
 
 package com.moon.moon_api.config;
 
 
-import com.moon.moon_commons.entity.constants.RabbitConstant;
+import com.moon.moon_commons.constants.RabbitConstant;
 import org.springframework.amqp.core.*;
 import org.springframework.amqp.rabbit.config.SimpleRabbitListenerContainerFactory;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
@@ -61,6 +56,7 @@ public class RabbitConfig {
     public Queue ddTaxiOrderQueue() {
         return new Queue(RabbitConstant.DD_TAXI_ORDER_QUEUE, true, false, false);
     }
+
     /**
      * 队列和交换机的绑定-routekey
      *
@@ -70,7 +66,7 @@ public class RabbitConfig {
      */
     @Bean
     Binding ddOrderBinding(@Qualifier("ddOrderExchange") DirectExchange ddOrderExchange,
-                               @Qualifier("ddOrderQueue") Queue ddOrderQueue) {
+                           @Qualifier("ddOrderQueue") Queue ddOrderQueue) {
         return BindingBuilder
                 .bind(ddOrderQueue)
                 .to(ddOrderExchange)
@@ -80,13 +76,13 @@ public class RabbitConfig {
     /**
      * 队列和交换机的绑定-routekey
      *
-     * @param ddOrderExchange 消息中心交换机
-     * @param ddTaxiOrderQueue    消息中心队列
+     * @param ddOrderExchange  消息中心交换机
+     * @param ddTaxiOrderQueue 消息中心队列
      * @return
      */
     @Bean
     Binding ddTaxiOrdeBinding(@Qualifier("ddOrderExchange") DirectExchange ddOrderExchange,
-                          @Qualifier("ddTaxiOrderQueue") Queue ddTaxiOrderQueue) {
+                              @Qualifier("ddTaxiOrderQueue") Queue ddTaxiOrderQueue) {
         return BindingBuilder
                 .bind(ddTaxiOrderQueue)
                 .to(ddOrderExchange)
@@ -250,8 +246,8 @@ public class RabbitConfig {
     /**
      * 消息通知队列名称--将绑定的司机信息延时转置发送到此队列
      *
-     * @Author: wn
      * @return
+     * @Author: wn
      */
     @Bean(value = "ddRealTimeFeeQueue")
     public Queue ddRealTimeFeeQueue() {
@@ -261,8 +257,8 @@ public class RabbitConfig {
     /**
      * 消息通知队列名称--将绑定的司机信息发送到此队列
      *
-     * @Author: wn
      * @return
+     * @Author: wn
      */
     @Bean(value = "ddRealTimePositionQueue")
     public Queue ddRealTimePositionQueue() {
@@ -278,7 +274,7 @@ public class RabbitConfig {
      */
     @Bean
     Binding ddRealTimeFeeBinding(@Qualifier("ddDataSyncExchange") DirectExchange ddDataSyncExchange,
-                                   @Qualifier("ddRealTimeFeeQueue") Queue ddRealTimeFeeQueue) {
+                                 @Qualifier("ddRealTimeFeeQueue") Queue ddRealTimeFeeQueue) {
         return BindingBuilder
                 .bind(ddRealTimeFeeQueue)
                 .to(ddDataSyncExchange)
@@ -288,13 +284,13 @@ public class RabbitConfig {
     /**
      * 队列和交换机的绑定-routekey
      *
-     * @param ddDataSyncExchange 消息中心交换机
-     * @param ddRealTimePositionQueue    消息中心队列
+     * @param ddDataSyncExchange      消息中心交换机
+     * @param ddRealTimePositionQueue 消息中心队列
      * @return
      */
     @Bean
     Binding ddRealTimePositionBinding(@Qualifier("ddDataSyncExchange") DirectExchange ddDataSyncExchange,
-                                   @Qualifier("ddRealTimePositionQueue") Queue ddRealTimePositionQueue) {
+                                      @Qualifier("ddRealTimePositionQueue") Queue ddRealTimePositionQueue) {
         return BindingBuilder
                 .bind(ddRealTimePositionQueue)
                 .to(ddDataSyncExchange)
