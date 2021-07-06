@@ -7,7 +7,7 @@ package com.moon.moon_api.config;
  *@Date 2020/2/16 20:50
  @Version 1.0
  **/
-public class ResultException extends Exception{
+public class ResultException extends RuntimeException{
     public String msg;
     public int errorCode;
 

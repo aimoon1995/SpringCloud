@@ -18,4 +18,15 @@
         user
         ORDER BY create_time DESC
     </select>
+
+
+    <insert id="insertData" parameterType="com.moon.moon_commons.entity.User">
+  insert into user (uuid, name, sex,
+    birth, create_time, creater,
+    updatetime)
+  values (#{param.uuid,jdbcType=VARCHAR}, #{param.name,jdbcType=VARCHAR}, #{param.sex,jdbcType=INTEGER},
+    #{param.birth,jdbcType=TIMESTAMP}, #{param.createTime,jdbcType=TIMESTAMP}, #{param.creater,jdbcType=VARCHAR},
+    #{param.updatetime,jdbcType=TIMESTAMP})
+</insert>
+
 </mapper>

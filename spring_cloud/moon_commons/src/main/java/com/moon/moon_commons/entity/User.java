@@ -17,7 +17,19 @@ public class User {
 
     private String uuid;
 
-    private  String name;
+    private String name;
+
+    /**
+     * 1 男 2女
+     */
+    private Integer sex;
 
     private Date birth;
+
+    private Date createTime;
+
+    private String creater;
+
+    private Date updatetime;
+
 }

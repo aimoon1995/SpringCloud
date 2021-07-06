@@ -172,9 +172,9 @@
         不能设置为INHERITED或者同义词NULL。默认是DEBUG
         可以包含零个或多个元素，标识这个appender将会添加到这个logger。
     -->
-    <appender name="SystemLog"
-              class="com.moon.moon_api.config.aspect.SystemLogAppender">
-    </appender>
+<!--    <appender name="SystemLog"-->
+<!--              class="com.moon.moon_api.config.aspect.SystemLogAppender">-->
+<!--    </appender>-->
     <!--开发环境:打印控制台-->
     <springProfile name="test">
         <logger name="com.moon" level="debug"/>
@@ -186,7 +186,7 @@
         <appender-ref ref="INFO_FILE"/>
         <appender-ref ref="WARN_FILE"/>
         <appender-ref ref="ERROR_FILE"/>
-        <appender-ref ref="SystemLog"/>
+<!--        <appender-ref ref="SystemLog"/>-->
     </root>
 
     <!--生产环境:输出到文件-->

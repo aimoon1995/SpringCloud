@@ -2,6 +2,7 @@ package com.moon.moon_api.mapper.moon;
 
 import com.moon.moon_commons.entity.User;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -16,4 +17,6 @@ import java.util.List;
 public interface UserMapper {
 
     List<User> list();
+
+    void insertData(@Param("param") User user);
 }
