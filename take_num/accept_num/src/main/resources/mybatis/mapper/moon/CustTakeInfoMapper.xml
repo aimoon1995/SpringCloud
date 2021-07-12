@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.moon.accept_num.mapper.CustTakeInfoMapper">
+    <resultMap id="BaseResultMap" type="com.moon.moon_commons.entity.NumItemEntity">
+        <id column="uuid" jdbcType="VARCHAR" property="uuid"/>
+        <result column="cust_uuid" jdbcType="VARCHAR" property="custUuid"/>
+        <result column="name" jdbcType="CHAR" property="name"/>
+        <result column="perm_count" jdbcType="INTEGER" property="permCount"/>
+        <result column="hair_cut_count" jdbcType="INTEGER" property="hairCutCount"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+    </resultMap>
+
+
+    <sql id="Base_Column_List">
+       uuid, cust_uuid, name, perm_count, hair_cut_count, create_time
+    </sql>
+
+
+    <delete id="delete" parameterType="java.lang.String">
+      delete from cust_take_info
+      where uuid = #{uuid,jdbcType=VARCHAR}
+    </delete>
+
+
+    <insert id="insert" parameterType="com.moon.moon_commons.entity.CustTakeInfoEntity">
+      insert into cust_take_info (uuid, cust_uuid, name,
+      perm_count, hair_cut_count, create_time
+      )
+      values (#{uuid,jdbcType=VARCHAR}, #{custUuid,jdbcType=VARCHAR}, #{name,jdbcType=CHAR},
+      #{permCount,jdbcType=INTEGER}, #{hairCutCount,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}
+      )
+    </insert>
+
+
+    <insert id="insertDynamic" parameterType="com.moon.moon_commons.entity.CustTakeInfoEntity">
+        insert into cust_take_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="uuid != null">
+                uuid,
+            </if>
+            <if test="custUuid != null">
+                cust_uuid,
+            </if>
+            <if test="name != null">
+                name,
+            </if>
+            <if test="permCount != null">
+                perm_count,
+            </if>
+            <if test="hairCutCount != null">
+                hair_cut_count,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="uuid != null">
+                #{uuid,jdbcType=VARCHAR},
+            </if>
+            <if test="custUuid != null">
+                #{custUuid,jdbcType=VARCHAR},
+            </if>
+            <if test="name != null">
+                #{name,jdbcType=CHAR},
+            </if>
+            <if test="permCount != null">
+                #{permCount,jdbcType=INTEGER},
+            </if>
+            <if test="hairCutCount != null">
+                #{hairCutCount,jdbcType=INTEGER},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
+
+
+    <update id="updateDynamic" parameterType="com.moon.moon_commons.entity.CustTakeInfoEntity">
+        update cust_take_info
+        <set>
+            <if test="custUuid != null">
+                cust_uuid = #{custUuid,jdbcType=VARCHAR},
+            </if>
+            <if test="name != null">
+                name = #{name,jdbcType=CHAR},
+            </if>
+            <if test="permCount != null">
+                perm_count = #{permCount,jdbcType=INTEGER},
+            </if>
+            <if test="hairCutCount != null">
+                hair_cut_count = #{hairCutCount,jdbcType=INTEGER},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where uuid = #{uuid,jdbcType=VARCHAR}
+    </update>
+
+
+    <update id="update" parameterType="com.moon.moon_commons.entity.CustTakeInfoEntity">
+      update cust_take_info
+      set cust_uuid = #{custUuid,jdbcType=VARCHAR},
+        name = #{name,jdbcType=CHAR},
+        perm_count = #{permCount,jdbcType=INTEGER},
+        hair_cut_count = #{hairCutCount,jdbcType=INTEGER},
+        create_time = #{createTime,jdbcType=TIMESTAMP}
+      where uuid = #{uuid,jdbcType=VARCHAR}
+    </update>
+
+
+    <select id="selectByUuid" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from cust_take_info
+        where uuid = #{uuid,jdbcType=VARCHAR}
+    </select>
+
+
+    <sql id="findPageWithWhere">
+        <where>1=1
+            <if test="uuid != null and uuid != ''">
+                and uuid = #{uuid,jdbcType=VARCHAR}
+            </if>
+            <if test="custUuid != null and custUuid != ''">
+                and cust_uuid = #{custUuid,jdbcType=VARCHAR}
+            </if>
+            <if test="name != null">
+                and name = #{name,jdbcType=CHAR}
+            </if>
+            <if test="permCount != null">
+                and perm_count = #{permCount,jdbcType=INTEGER}
+            </if>
+            <if test="hairCutCount != null">
+                and hair_cut_count = #{hairCutCount,jdbcType=INTEGER}
+            </if>
+            <if test="createTime != null">
+                and create_time = #{createTime,jdbcType=TIMESTAMP}
+            </if>
+        </where>
+    </sql>
+
+
+    <select id="findPageWithResult" parameterType="com.moon.moon_commons.entity.CustTakeInfoEntity"
+            resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from cust_take_info
+        <include refid="findPageWithWhere"/>
+        limit #{start},#{pageSize}
+    </select>
+
+
+    <select id="findPageWithCount" parameterType="com.moon.moon_commons.entity.CustTakeInfoEntity" resultType="Integer">
+        select count(1)
+        from cust_take_info
+        <include refid="findPageWithWhere"/>
+    </select>
+
+</mapper>

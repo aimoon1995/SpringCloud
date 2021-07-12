@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.moon.accept_num.mapper.NumItemMapper">
+
+    <resultMap id="BaseResultMap" type="com.moon.moon_commons.entity.NumItemEntity">
+        <id column="uuid" jdbcType="VARCHAR" property="uuid" />
+        <result column="num" jdbcType="INTEGER" property="num" />
+        <result column="status" jdbcType="INTEGER" property="status" />
+        <result column="type" jdbcType="INTEGER" property="status" />
+        <result column="take_uuid" jdbcType="VARCHAR" property="takeUuid" />
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    </resultMap>
+
+
+    <sql id="Base_Column_List">
+  uuid, num, status, take_uuid, create_time
+</sql>
+
+
+    <delete id="delete" parameterType="java.lang.String">
+  delete from num_item
+  where uuid = #{uuid,jdbcType=VARCHAR}
+</delete>
+
+
+    <insert id="insert" parameterType="com.moon.moon_commons.entity.NumItemEntity">
+  insert into num_item (uuid, num, status, 
+    take_uuid, create_time)
+  values (#{uuid,jdbcType=VARCHAR}, #{num,jdbcType=INTEGER}, #{status,jdbcType=INTEGER}, 
+    #{takeUuid,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP})
+</insert>
+
+
+    <insert id="insertDynamic" parameterType="com.moon.moon_commons.entity.NumItemEntity">
+        insert into num_item
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="uuid != null">
+                uuid,
+            </if>
+            <if test="num != null">
+                num,
+            </if>
+            <if test="status != null">
+                status,
+            </if>
+            <if test="takeUuid != null">
+                take_uuid,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="uuid != null">
+                #{uuid,jdbcType=VARCHAR},
+            </if>
+            <if test="num != null">
+                #{num,jdbcType=INTEGER},
+            </if>
+            <if test="status != null">
+                #{status,jdbcType=INTEGER},
+            </if>
+            <if test="takeUuid != null">
+                #{takeUuid,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
+
+
+    <update id="updateDynamic" parameterType="com.moon.moon_commons.entity.NumItemEntity">
+        update num_item
+        <set>
+            <if test="num != null">
+                num = #{num,jdbcType=INTEGER},
+            </if>
+            <if test="status != null">
+                status = #{status,jdbcType=INTEGER},
+            </if>
+            <if test="takeUuid != null">
+                take_uuid = #{takeUuid,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where uuid = #{uuid,jdbcType=VARCHAR}
+    </update>
+
+
+    <update id="update" parameterType="com.moon.moon_commons.entity.NumItemEntity">
+  update num_item
+  set num = #{num,jdbcType=INTEGER},
+    status = #{status,jdbcType=INTEGER},
+    take_uuid = #{takeUuid,jdbcType=VARCHAR},
+    create_time = #{createTime,jdbcType=TIMESTAMP}
+  where uuid = #{uuid,jdbcType=VARCHAR}
+</update>
+
+
+    <select id="selectByUuid" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from  num_item
+        where uuid = #{uuid,jdbcType=VARCHAR}
+    </select>
+
+
+    <sql id="findPageWithWhere">
+        <where> 1=1
+            <if test="uuid != null and uuid != ''" >
+                and uuid = #{uuid,jdbcType=VARCHAR}
+            </if>
+            <if test="num != null" >
+                and num = #{num,jdbcType=INTEGER}
+            </if>
+            <if test="status != null" >
+                and status = #{status,jdbcType=INTEGER}
+            </if>
+            <if test="takeUuid != null and takeUuid != ''" >
+                and take_uuid = #{takeUuid,jdbcType=VARCHAR}
+            </if>
+            <if test="createTime != null" >
+                and create_time = #{createTime,jdbcType=TIMESTAMP}
+            </if>
+        </where>
+    </sql>
+
+
+    <select id="findPageWithResult" parameterType="com.moon.moon_commons.entity.NumItemEntity" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from  num_item
+        <include refid="findPageWithWhere" />
+        limit #{start},#{pageSize}
+    </select>
+
+
+    <select id="findPageWithCount" parameterType="com.moon.moon_commons.entity.NumItemEntity" resultType="Integer">
+        select count(1)
+        from num_item
+        <include refid="findPageWithWhere" />
+    </select>
+
+</mapper>

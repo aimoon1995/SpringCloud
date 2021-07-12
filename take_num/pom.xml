@@ -91,7 +91,7 @@
     </dependencies>
 
     <modules>
-        <module>moon_api</module>
+        <module>accept_num</module>
         <module>moon_commons</module>
     </modules>
 

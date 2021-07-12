@@ -10,7 +10,4 @@ package com.moon.moon_commons.constants;
 public interface DbTxConstants {
 
     public static final String DB1_TX = "moonTransactionManager";
-
-    public static final String DB2_TX = "moonSecTransactionManager";
-
 }

@@ -25,17 +25,6 @@ public class DataSourceConfig {
     }
 
 
-    /**
-     * moonSec库
-     */
-    @Bean(name = "moonSecDataSource")
-    @Qualifier("moonSecDataSource")
-    @ConfigurationProperties(prefix = "spring.datasource.secondary")
-    public DataSource moonSecDataSource() {
-        return  new DruidDataSource();
-    }
-
-
 
 
 }
