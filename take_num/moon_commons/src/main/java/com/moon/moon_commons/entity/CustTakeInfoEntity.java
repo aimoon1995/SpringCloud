@@ -24,5 +24,5 @@ public class CustTakeInfoEntity {
 
     private  Integer hairCutCount;
 
-    private Date CreateTime;
+    private Date createTime;
 }

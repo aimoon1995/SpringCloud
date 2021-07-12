@@ -1,6 +1,9 @@
 package com.moon.accept_num.mapper;
 
+import com.moon.moon_commons.bean.TypeCountBean;
 import org.apache.ibatis.annotations.Mapper;
+
+import java.util.List;
 
 /**
  * @ClassName NumItemMapper
@@ -11,4 +14,6 @@ import org.apache.ibatis.annotations.Mapper;
  **/
 @Mapper
 public interface NumItemMapper {
+
+    List<TypeCountBean> selectTypeCount();
 }

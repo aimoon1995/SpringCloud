@@ -14,18 +14,12 @@
 
 
     <sql id="Base_Column_List">
-  uuid, num, status, take_uuid, create_time
-</sql>
-
-
-    <delete id="delete" parameterType="java.lang.String">
-  delete from num_item
-  where uuid = #{uuid,jdbcType=VARCHAR}
-</delete>
+    uuid,type, num, status, take_uuid, create_time
+   </sql>
 
 
     <insert id="insert" parameterType="com.moon.moon_commons.entity.NumItemEntity">
-  insert into num_item (uuid, num, status, 
+  insert into num_item (uuid,type, num, status,
     take_uuid, create_time)
   values (#{uuid,jdbcType=VARCHAR}, #{num,jdbcType=INTEGER}, #{status,jdbcType=INTEGER}, 
     #{takeUuid,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP})
@@ -37,6 +31,9 @@
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="uuid != null">
                 uuid,
+            </if>
+            <if test="uuid != null">
+                type,
             </if>
             <if test="num != null">
                 num,
@@ -54,6 +51,9 @@
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="uuid != null">
                 #{uuid,jdbcType=VARCHAR},
+            </if>
+            <if test="type != null">
+                #{type,jdbcType=INTEGER},
             </if>
             <if test="num != null">
                 #{num,jdbcType=INTEGER},
@@ -77,6 +77,9 @@
             <if test="num != null">
                 num = #{num,jdbcType=INTEGER},
             </if>
+            <if test="type != null">
+                type = #{type,jdbcType=INTEGER},
+            </if>
             <if test="status != null">
                 status = #{status,jdbcType=INTEGER},
             </if>
@@ -89,17 +92,6 @@
         </set>
         where uuid = #{uuid,jdbcType=VARCHAR}
     </update>
-
-
-    <update id="update" parameterType="com.moon.moon_commons.entity.NumItemEntity">
-  update num_item
-  set num = #{num,jdbcType=INTEGER},
-    status = #{status,jdbcType=INTEGER},
-    take_uuid = #{takeUuid,jdbcType=VARCHAR},
-    create_time = #{createTime,jdbcType=TIMESTAMP}
-  where uuid = #{uuid,jdbcType=VARCHAR}
-</update>
-
 
     <select id="selectByUuid" parameterType="java.lang.String" resultMap="BaseResultMap">
         select
@@ -143,6 +135,10 @@
         select count(1)
         from num_item
         <include refid="findPageWithWhere" />
+    </select>
+
+    <select id="selectTypeCount"  resultType="com.moon.moon_commons.bean.TypeCountBean">
+        select type,count(1) as numCount from num_item  where status in (1,2) group by type;
     </select>
 
 </mapper>

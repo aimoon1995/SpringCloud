@@ -18,6 +18,11 @@ public class NumItemEntity {
 
     private  Integer num;
 
+    private  Integer type;
+
+    /**
+     * 1 未开始 2进行中 3已完成 4已作废
+     */
     private  Integer status;
 
     private  String takeUuid;
