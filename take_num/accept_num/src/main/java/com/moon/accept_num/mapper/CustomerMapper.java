@@ -1,6 +1,8 @@
 package com.moon.accept_num.mapper;
 
+import com.moon.moon_commons.entity.CustomerEntity;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * @ClassName CustomerMapper
@@ -11,4 +13,8 @@ import org.apache.ibatis.annotations.Mapper;
  **/
 @Mapper
 public interface CustomerMapper {
+
+    CustomerEntity selectInfoByParams(@Param("param") CustomerEntity customer);
+
+    void insert(@Param("param") CustomerEntity customer);
 }

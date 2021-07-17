@@ -1,6 +1,8 @@
 package com.moon.accept_num.mapper;
 
+import com.moon.moon_commons.entity.CustTakeInfoEntity;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * @ClassName CustTakeInfoMapper
@@ -11,4 +13,5 @@ import org.apache.ibatis.annotations.Mapper;
  **/
 @Mapper
 public interface CustTakeInfoMapper {
+    void insert(@Param("param")CustTakeInfoEntity custTakeInfoEntity);
 }

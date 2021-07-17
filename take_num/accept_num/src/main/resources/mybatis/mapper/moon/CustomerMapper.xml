@@ -15,4 +15,18 @@
        uuid, mobile,create_time
     </sql>
 
+    <select id="selectInfoByParams" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"></include>
+        from customer
+        <where>
+            <if test="param.mobile != null" >
+                and mobile = #{param.mobile}
+            </if>
+        </where>
+    </select>
+
+    <insert id="insert" parameterType="com.moon.moon_commons.entity.CustomerEntity" >
+        insert (uuid,mobile) values (#{param.uuid},#{param.mobile})
+    </insert>
 </mapper>
