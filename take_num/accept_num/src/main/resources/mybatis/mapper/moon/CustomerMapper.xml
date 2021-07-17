@@ -8,11 +8,12 @@
         <id column="uuid" jdbcType="VARCHAR" property="uuid" />
         <result column="mobile" jdbcType="VARCHAR" property="mobile" />
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+        <result column="open_id" jdbcType="VARCHAR" property="openId" />
     </resultMap>
 
 
     <sql id="Base_Column_List">
-       uuid, mobile,create_time
+       uuid, mobile,create_time,open_id
     </sql>
 
     <select id="selectInfoByParams" resultMap="BaseResultMap">
@@ -27,6 +28,20 @@
     </select>
 
     <insert id="insert" parameterType="com.moon.moon_commons.entity.CustomerEntity" >
-        insert (uuid,mobile) values (#{param.uuid},#{param.mobile})
+        insert into customer (uuid,mobile,open_id) values (#{param.uuid},#{param.mobile},#{param.openId})
     </insert>
+
+    <update id="updateDynamic" parameterType="com.moon.moon_commons.entity.CustomerEntity">
+        update customer
+        <set>
+            <if test="param.mobile != null">
+                mobile = #{param.mobile,jdbcType=VARCHAR},
+            </if>
+            <if test="param.openId != null">
+                open_id = #{param.openId,jdbcType=CHAR},
+            </if>
+
+        </set>
+        where uuid = #{param.uuid,jdbcType=VARCHAR}
+    </update>
 </mapper>

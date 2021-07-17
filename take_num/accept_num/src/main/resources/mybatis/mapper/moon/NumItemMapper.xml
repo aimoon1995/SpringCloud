@@ -18,54 +18,49 @@
    </sql>
 
 
+
+
+
     <insert id="insert" parameterType="com.moon.moon_commons.entity.NumItemEntity">
-  insert into num_item (uuid,type, num, status,
-    take_uuid, create_time)
-  values (#{uuid,jdbcType=VARCHAR}, #{num,jdbcType=INTEGER}, #{status,jdbcType=INTEGER}, 
-    #{takeUuid,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP})
-</insert>
-
-
-    <insert id="insertDynamic" parameterType="com.moon.moon_commons.entity.NumItemEntity">
         insert into num_item
         <trim prefix="(" suffix=")" suffixOverrides=",">
-            <if test="uuid != null">
+            <if test="param.uuid != null">
                 uuid,
             </if>
-            <if test="uuid != null">
+            <if test="param.type != null">
                 type,
             </if>
-            <if test="num != null">
+            <if test="param.num != null">
                 num,
             </if>
-            <if test="status != null">
+            <if test="param.status != null">
                 status,
             </if>
-            <if test="takeUuid != null">
+            <if test="param.takeUuid != null">
                 take_uuid,
             </if>
-            <if test="createTime != null">
+            <if test="param.createTime != null">
                 create_time,
             </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
-            <if test="uuid != null">
-                #{uuid,jdbcType=VARCHAR},
+            <if test="param.uuid != null">
+                #{param.uuid,jdbcType=VARCHAR},
             </if>
-            <if test="type != null">
-                #{type,jdbcType=INTEGER},
+            <if test="param.type != null">
+                #{param.type,jdbcType=INTEGER},
             </if>
-            <if test="num != null">
-                #{num,jdbcType=INTEGER},
+            <if test="param.num != null">
+                #{param.num,jdbcType=INTEGER},
             </if>
-            <if test="status != null">
-                #{status,jdbcType=INTEGER},
+            <if test="param.status != null">
+                #{param.status,jdbcType=INTEGER},
             </if>
-            <if test="takeUuid != null">
-                #{takeUuid,jdbcType=VARCHAR},
+            <if test="param.takeUuid != null">
+                #{param.takeUuid,jdbcType=VARCHAR},
             </if>
-            <if test="createTime != null">
-                #{createTime,jdbcType=TIMESTAMP},
+            <if test="param.createTime != null">
+                #{param.createTime,jdbcType=TIMESTAMP},
             </if>
         </trim>
     </insert>
@@ -140,5 +135,10 @@
     <select id="selectTypeCount"  resultType="com.moon.moon_commons.bean.TypeCountBean">
         select type,count(1) as numCount from num_item  where status in (1,2) group by type;
     </select>
+
+    <select id="selectMaxNumByType" resultType="com.moon.moon_commons.bean.TypeCountBean">
+         select type,MAX(num) as numCount from num_item group by type;
+    </select>
+
 
 </mapper>

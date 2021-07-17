@@ -8,6 +8,33 @@ server:
 spring:
   application:
     name: moon-api
+
+  redis:
+    #wechat服务器
+    host: 47.105.88.185
+    # Redis服务器连接端口
+    port: 6378
+    jedis:
+      pool:
+        #连接池最大连接数（使用负值表示没有限制）
+        max-active: 100
+        # 连接池中的最小空闲连接
+        max-idle: 10
+        # 连接池最大阻塞等待时间（使用负值表示没有限制）
+        max-wait: 100000
+    # 连接超时时间（毫秒）
+    timeout: 3000
+    password: cyj7416146
+  rabbitmq:
+    host: 47.105.88.185
+    port: 5672
+    username: mt
+    password: iammt
+    listener:
+      concurrency: 3
+      retry:
+        enabled: false
+    virtual-host: didi_order
   datasource:
     primary:
       type: com.alibaba.druid.pool.DruidDataSource
@@ -183,3 +210,8 @@ mybatis:
 #日志配置
 logging:
   config: classpath:logback-spring.xml
+
+
+  # redisson lock
+redisson.address: redis://47.105.88.185:6378
+redisson.password: cyj7416146

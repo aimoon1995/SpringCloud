@@ -16,4 +16,6 @@ public class CustomerEntity {
 
     private  String mobile;
 
+    private  String openId;
+
 }

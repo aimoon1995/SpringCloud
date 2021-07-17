@@ -1,7 +1,9 @@
 package com.moon.accept_num.mapper;
 
 import com.moon.moon_commons.bean.TypeCountBean;
+import com.moon.moon_commons.entity.NumItemEntity;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -16,4 +18,8 @@ import java.util.List;
 public interface NumItemMapper {
 
     List<TypeCountBean> selectTypeCount();
+
+    List<TypeCountBean> selectMaxNumByType();
+
+    void insert(@Param("param") NumItemEntity numItemEntity);
 }

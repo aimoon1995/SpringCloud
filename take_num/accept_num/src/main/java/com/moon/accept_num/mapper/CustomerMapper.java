@@ -17,4 +17,6 @@ public interface CustomerMapper {
     CustomerEntity selectInfoByParams(@Param("param") CustomerEntity customer);
 
     void insert(@Param("param") CustomerEntity customer);
+
+    void update(@Param("param") CustomerEntity customer);
 }

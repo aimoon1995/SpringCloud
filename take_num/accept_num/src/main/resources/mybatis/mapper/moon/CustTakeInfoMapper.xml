@@ -24,55 +24,45 @@
 
 
     <insert id="insert" parameterType="com.moon.moon_commons.entity.CustTakeInfoEntity">
-      insert into cust_take_info (uuid, cust_uuid, name,
-      perm_count, hair_cut_count, create_time
-      )
-      values (#{uuid,jdbcType=VARCHAR}, #{custUuid,jdbcType=VARCHAR}, #{name,jdbcType=CHAR},
-      #{permCount,jdbcType=INTEGER}, #{hairCutCount,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}
-      )
-    </insert>
-
-
-    <insert id="insertDynamic" parameterType="com.moon.moon_commons.entity.CustTakeInfoEntity">
         insert into cust_take_info
         <trim prefix="(" suffix=")" suffixOverrides=",">
-            <if test="uuid != null">
+            <if test="param.uuid != null">
                 uuid,
             </if>
-            <if test="custUuid != null">
+            <if test="param.custUuid != null">
                 cust_uuid,
             </if>
-            <if test="name != null">
+            <if test="param.name != null">
                 name,
             </if>
-            <if test="permCount != null">
+            <if test="param.permCount != null">
                 perm_count,
             </if>
-            <if test="hairCutCount != null">
+            <if test="param.hairCutCount != null">
                 hair_cut_count,
             </if>
-            <if test="createTime != null">
+            <if test="param.createTime != null">
                 create_time,
             </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
-            <if test="uuid != null">
-                #{uuid,jdbcType=VARCHAR},
+            <if test="param.uuid != null">
+                #{param.uuid,jdbcType=VARCHAR},
             </if>
-            <if test="custUuid != null">
-                #{custUuid,jdbcType=VARCHAR},
+            <if test="param.custUuid != null">
+                #{param.custUuid,jdbcType=VARCHAR},
             </if>
-            <if test="name != null">
-                #{name,jdbcType=CHAR},
+            <if test="param.name != null">
+                #{param.name,jdbcType=CHAR},
             </if>
-            <if test="permCount != null">
-                #{permCount,jdbcType=INTEGER},
+            <if test="param.permCount != null">
+                #{param.permCount,jdbcType=INTEGER},
             </if>
-            <if test="hairCutCount != null">
-                #{hairCutCount,jdbcType=INTEGER},
+            <if test="param.hairCutCount != null">
+                #{param.hairCutCount,jdbcType=INTEGER},
             </if>
-            <if test="createTime != null">
-                #{createTime,jdbcType=TIMESTAMP},
+            <if test="param.createTime != null">
+                #{param.createTime,jdbcType=TIMESTAMP},
             </if>
         </trim>
     </insert>
