@@ -25,16 +25,6 @@ spring:
     # 连接超时时间（毫秒）
     timeout: 3000
     password: cyj7416146
-  rabbitmq:
-    host: 47.105.88.185
-    port: 5672
-    username: mt
-    password: iammt
-    listener:
-      concurrency: 3
-      retry:
-        enabled: false
-    virtual-host: didi_order
   datasource:
     primary:
       type: com.alibaba.druid.pool.DruidDataSource
