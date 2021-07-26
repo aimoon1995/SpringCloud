@@ -17,8 +17,15 @@
     uuid,type, num, status, take_uuid, create_time
    </sql>
 
+    <select id="selectUseAbleNumCount" parameterType="java.lang.String" resultType="java.lang.Integer">
+        select count(1) from  customer c left join cust_take_info ti on c.uuid = ti.cust_uuid
+        left join num_item ni on ti.uuid = ni.take_uuid  where status = 1 and c.mobile = #{mobile}
+    </select>
 
-
+    <select id="selectUseAbleNums" parameterType="java.lang.String" resultType="java.lang.Integer">
+        select ni.num from  customer c left join cust_take_info ti on c.uuid = ti.cust_uuid
+        left join num_item ni on ti.uuid = ni.take_uuid  where status = 1 and c.open_id = #{openId}
+    </select>
 
 
     <insert id="insert" parameterType="com.moon.moon_commons.entity.NumItemEntity">
@@ -133,7 +140,7 @@
     </select>
 
     <select id="selectTypeCount"  resultType="com.moon.moon_commons.bean.TypeCountBean">
-        select type,count(1) as numCount from num_item  where status in (1,2) group by type;
+        select type,count(1) as numCount from num_item  where status = 1 group by type;
     </select>
 
     <select id="selectMaxNumByType" resultType="com.moon.moon_commons.bean.TypeCountBean">

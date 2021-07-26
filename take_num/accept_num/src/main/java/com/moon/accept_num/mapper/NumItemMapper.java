@@ -22,4 +22,8 @@ public interface NumItemMapper {
     List<TypeCountBean> selectMaxNumByType();
 
     void insert(@Param("param") NumItemEntity numItemEntity);
+
+    int selectUseAbleNumCount(String mobile);
+
+    List<Integer> selectUseAbleNums(String openId);
 }

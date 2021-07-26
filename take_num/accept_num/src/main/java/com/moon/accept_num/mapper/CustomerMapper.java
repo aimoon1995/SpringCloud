@@ -18,5 +18,5 @@ public interface CustomerMapper {
 
     void insert(@Param("param") CustomerEntity customer);
 
-    void update(@Param("param") CustomerEntity customer);
+    void updateDynamic(@Param("param") CustomerEntity customer);
 }

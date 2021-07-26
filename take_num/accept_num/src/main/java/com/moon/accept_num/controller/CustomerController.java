@@ -124,4 +124,21 @@ public class CustomerController {
         }
         return res;
     }
+
+
+    /**
+     * @return
+     * @Author zyl
+     * @Description 获取当前有效的号码
+     * @Date 2021/7/9
+     **/
+    @RequestMapping("/type/showNum")
+    @ResponseBody
+    public ResponseBean getTypeCount( @RequestParam String openId) {
+        if (StringUtil.isEmpty(openId)) {
+            ResponseBean.createError("openId不可为空");
+        }
+        return  takeNumService.getCustUserAbleNum(openId);
+    }
+
 }

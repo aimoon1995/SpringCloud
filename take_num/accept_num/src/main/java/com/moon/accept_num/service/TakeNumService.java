@@ -36,25 +36,26 @@ public class TakeNumService {
     private CustTakeInfoMapper custTakeInfoMapper;
 
     public Map getTypeCount() {
-        List<TypeCountBean> typeCountBeans  =  numItemMapper.selectTypeCount();
-        Map<String,Integer> dataMap = new HashMap<String,Integer>();
-        dataMap.put("permCount",0);
-        dataMap.put("hairCutCount",0);
+        List<TypeCountBean> typeCountBeans = numItemMapper.selectTypeCount();
+        Map<String, Integer> dataMap = new HashMap<String, Integer>();
+        dataMap.put("permCount", 0);
+        dataMap.put("hairCutCount", 0);
         if (null != typeCountBeans && typeCountBeans.size() > 0) {
-            for (TypeCountBean typeCountBean:typeCountBeans) {
+            for (TypeCountBean typeCountBean : typeCountBeans) {
                 if (CommonConstants.PERM_TYPE.equals(typeCountBean.getType())) {
-                    dataMap.put("permCount",typeCountBean.getNumCount());
+                    dataMap.put("permCount", typeCountBean.getNumCount());
                 } else {
-                    dataMap.put("hairCutCount",typeCountBean.getNumCount());
+                    dataMap.put("hairCutCount", typeCountBean.getNumCount());
                 }
             }
         }
-        return  dataMap;
+        return dataMap;
     }
 
 
     /**
      * 取号  需要集成redis锁
+     *
      * @param permCount
      * @param hairCutCount
      * @param name
@@ -62,8 +63,14 @@ public class TakeNumService {
      * @return
      */
     @Transactional(rollbackFor = RuntimeException.class)
-    public ResponseBean takeNum(Integer permCount, Integer hairCutCount, String name, String mobile,String openId) {
-         // 1、查询有没有此用户的信息，没有则新增,有则修改
+    public ResponseBean takeNum(Integer permCount, Integer hairCutCount, String name, String mobile, String openId) {
+
+        int numCount = numItemMapper.selectUseAbleNumCount(mobile);
+        if (numCount > 0) {
+            return ResponseBean.createError("您还有未完成的号，请继续等待");
+        }
+
+        // 1、查询有没有此用户的信息，没有则新增,有则修改
         CustTakeInfoEntity custTakeInfoEntity = new CustTakeInfoEntity();
         CustomerEntity customer = new CustomerEntity();
         customer.setMobile(mobile);
@@ -76,7 +83,7 @@ public class TakeNumService {
         } else {
             customer.setUuid(customerEntity.getUuid());
             customer.setOpenId(openId);
-            customerMapper.update(customer);
+            customerMapper.updateDynamic(customer);
         }
         //2、新增本次取号数据
         custTakeInfoEntity.setUuid(UUIDGenerator.get());
@@ -87,10 +94,10 @@ public class TakeNumService {
         custTakeInfoEntity.setHairCutCount(hairCutCount);
         custTakeInfoMapper.insert(custTakeInfoEntity);
         //3 查询不同类型目前最大的号
-        List<TypeCountBean>  typeCountBeans =   numItemMapper.selectMaxNumByType();
+        List<TypeCountBean> typeCountBeans = numItemMapper.selectMaxNumByType();
         Integer perMaxNum = 0;
         Integer hairCutMaxNum = 0;
-        for (TypeCountBean countBean:typeCountBeans) {
+        for (TypeCountBean countBean : typeCountBeans) {
             if (CommonConstants.PERM_TYPE.equals(countBean.getType())) {
                 perMaxNum = countBean.getNumCount();
             } else {
@@ -99,7 +106,7 @@ public class TakeNumService {
         }
         //新增
         if (null != permCount && permCount > 0) {
-            for (int i = 1; i <=permCount; i++) {
+            for (int i = 1; i <= permCount; i++) {
                 NumItemEntity numItemEntity = new NumItemEntity();
                 numItemEntity.setUuid(UUIDGenerator.get());
                 numItemEntity.setType(CommonConstants.PERM_TYPE);
@@ -111,7 +118,7 @@ public class TakeNumService {
             }
         }
         if (null != hairCutCount && hairCutCount > 0) {
-            for (int i = 1; i <=hairCutCount; i++) {
+            for (int i = 1; i <= hairCutCount; i++) {
                 NumItemEntity numItemEntity = new NumItemEntity();
                 numItemEntity.setUuid(UUIDGenerator.get());
                 numItemEntity.setType(CommonConstants.HAIR_TYPE);
@@ -124,4 +131,26 @@ public class TakeNumService {
         }
         return ResponseBean.createSuccess("取号成功");
     }
+
+
+    /**
+     * @param openId
+     * @return com.moon.moon_commons.util.ResponseBean
+     * @Author zyl
+     * @Description 获取当前有效的号码
+     * @Date 2021/7/20
+     **/
+    public ResponseBean getCustUserAbleNum(String openId) {
+        List<Integer> nums = numItemMapper.selectUseAbleNums(openId);
+        String numStr = "";
+        if (nums.size() > 0) {
+            numStr = "您当前在排号数为 ";
+            for (Integer num:nums) {
+                numStr = numStr + num+"号 ";
+            }
+            numStr = numStr+",不可以再次取号,请您耐心等待...";
+        }
+
+        return  ResponseBean.createSuccess(numStr);
+}
 }
