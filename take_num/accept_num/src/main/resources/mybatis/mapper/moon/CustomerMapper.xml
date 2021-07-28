@@ -24,6 +24,9 @@
             <if test="param.mobile != null" >
                 and mobile = #{param.mobile}
             </if>
+            <if test="param.openId != null" >
+                and open_id = #{param.openId}
+            </if>
         </where>
     </select>
 

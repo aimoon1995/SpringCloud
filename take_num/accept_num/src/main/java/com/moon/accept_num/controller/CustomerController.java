@@ -2,8 +2,10 @@ package com.moon.accept_num.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import com.moon.accept_num.service.TakeNumService;
+import com.moon.moon_commons.constants.CommonConstants;
 import com.moon.moon_commons.util.ResponseBean;
 import com.moon.moon_commons.util.StringUtil;
+import com.moon.moon_commons.util.WxSendMsgUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
@@ -17,6 +19,7 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -49,13 +52,13 @@ public class CustomerController {
      **/
     @RequestMapping("/openid/get")
     @ResponseBody
-    public ResponseBean getOpenId(String code) throws IOException {
+    public ResponseBean getOpenId(@RequestParam String code) throws IOException {
         String url = "https://api.weixin.qq.com/sns/jscode2session?appid=wx6a81be5a43c7c94d&secret=21f24b17e4f48bd570b0a908e37df915&js_code=" + code + "&grant_type=authorization_code";
         ResponseEntity responseEntity = getForm(url);
         return ResponseBean.createSuccess("", JSONObject.parseObject(responseEntity.getBody().toString()));
     }
 
-    private ResponseEntity getForm(String url) throws HttpClientErrorException, IOException {
+    public  ResponseEntity getForm(String url) throws HttpClientErrorException, IOException {
         try {
             //  输出结果
             ResponseEntity<String> forEntity = restTemplate.getForEntity(url, String.class);
@@ -64,7 +67,6 @@ public class CustomerController {
             throw e;
         }
     }
-
     /**
      * @return
      * @Author zyl
@@ -74,7 +76,9 @@ public class CustomerController {
     @RequestMapping("/type/count")
     @ResponseBody
     public ResponseBean getTypeCount() {
-        Map typeCountBeans = takeNumService.getTypeCount();
+        Map serMap = new HashMap();
+        serMap.put("status", CommonConstants.TAKE_NUM_STATUS_WAITING);
+        Map typeCountBeans = takeNumService.getTypeCount(serMap);
         return ResponseBean.createSuccess("", typeCountBeans);
     }
 
@@ -102,7 +106,7 @@ public class CustomerController {
             ResponseBean.createError("必须取一个号");
         }
         if (StringUtil.isEmpty(openId)) {
-            ResponseBean.createError("openId不可为空");
+            ResponseBean.createError("openId缺失,请重新进入小程序");
         }
         try {
             RLock lock = redissonClient.getLock("takeNum");

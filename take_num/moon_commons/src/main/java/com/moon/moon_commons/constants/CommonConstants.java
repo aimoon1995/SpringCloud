@@ -8,6 +8,12 @@ package com.moon.moon_commons.constants;
 
 public interface CommonConstants {
 
+
+
+    public static final String defaultPageSize = "10";
+
+    public static final String defaultPageNum = "1";
+
     public  static  final Integer   PERM_TYPE = 1;
 
     public  static  final Integer   HAIR_TYPE = 2;
@@ -19,4 +25,6 @@ public interface CommonConstants {
     public  static  final Integer  TAKE_NUM_STATUS_DOING = 2;
     public  static  final Integer  TAKE_NUM_STATUS_COMPLETED = 3;
     public  static  final Integer  TAKE_NUM_STATUS_CANCELED = 4;
+
+
 }

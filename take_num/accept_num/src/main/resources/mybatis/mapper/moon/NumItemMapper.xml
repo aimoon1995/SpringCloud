@@ -4,12 +4,13 @@
 <mapper namespace="com.moon.accept_num.mapper.NumItemMapper">
 
     <resultMap id="BaseResultMap" type="com.moon.moon_commons.entity.NumItemEntity">
-        <id column="uuid" jdbcType="VARCHAR" property="uuid" />
-        <result column="num" jdbcType="INTEGER" property="num" />
-        <result column="status" jdbcType="INTEGER" property="status" />
-        <result column="type" jdbcType="INTEGER" property="status" />
-        <result column="take_uuid" jdbcType="VARCHAR" property="takeUuid" />
-        <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+        <id column="uuid" jdbcType="VARCHAR" property="uuid"/>
+        <result column="num" jdbcType="INTEGER" property="num"/>
+        <result column="status" jdbcType="INTEGER" property="status"/>
+        <result column="type" jdbcType="INTEGER" property="status"/>
+        <result column="take_uuid" jdbcType="VARCHAR" property="takeUuid"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
     </resultMap>
 
 
@@ -73,7 +74,7 @@
     </insert>
 
 
-    <update id="updateDynamic" parameterType="com.moon.moon_commons.entity.NumItemEntity">
+    <update id="update" parameterType="com.moon.moon_commons.entity.NumItemEntity">
         update num_item
         <set>
             <if test="num != null">
@@ -91,44 +92,53 @@
             <if test="createTime != null">
                 create_time = #{createTime,jdbcType=TIMESTAMP},
             </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
         </set>
-        where uuid = #{uuid,jdbcType=VARCHAR}
+        <where>
+            uuid = #{uuid,jdbcType=VARCHAR}
+            <if test="lastUpdTime != null">
+                and update_time = #{lastUpdTime}
+            </if>
+        </where>
     </update>
 
     <select id="selectByUuid" parameterType="java.lang.String" resultMap="BaseResultMap">
         select
-        <include refid="Base_Column_List" />
-        from  num_item
+        <include refid="Base_Column_List"/>
+        from num_item
         where uuid = #{uuid,jdbcType=VARCHAR}
     </select>
 
 
     <sql id="findPageWithWhere">
-        <where> 1=1
-            <if test="uuid != null and uuid != ''" >
+        <where>1=1
+            <if test="uuid != null and uuid != ''">
                 and uuid = #{uuid,jdbcType=VARCHAR}
             </if>
-            <if test="num != null" >
+            <if test="num != null">
                 and num = #{num,jdbcType=INTEGER}
             </if>
-            <if test="status != null" >
+            <if test="status != null">
                 and status = #{status,jdbcType=INTEGER}
             </if>
-            <if test="takeUuid != null and takeUuid != ''" >
+            <if test="takeUuid != null and takeUuid != ''">
                 and take_uuid = #{takeUuid,jdbcType=VARCHAR}
             </if>
-            <if test="createTime != null" >
+            <if test="createTime != null">
                 and create_time = #{createTime,jdbcType=TIMESTAMP}
             </if>
         </where>
     </sql>
 
 
-    <select id="findPageWithResult" parameterType="com.moon.moon_commons.entity.NumItemEntity" resultMap="BaseResultMap">
+    <select id="findPageWithResult" parameterType="com.moon.moon_commons.entity.NumItemEntity"
+            resultMap="BaseResultMap">
         select
-        <include refid="Base_Column_List" />
-        from  num_item
-        <include refid="findPageWithWhere" />
+        <include refid="Base_Column_List"/>
+        from num_item
+        <include refid="findPageWithWhere"/>
         limit #{start},#{pageSize}
     </select>
 
@@ -136,16 +146,39 @@
     <select id="findPageWithCount" parameterType="com.moon.moon_commons.entity.NumItemEntity" resultType="Integer">
         select count(1)
         from num_item
-        <include refid="findPageWithWhere" />
+        <include refid="findPageWithWhere"/>
     </select>
 
-    <select id="selectTypeCount"  resultType="com.moon.moon_commons.bean.TypeCountBean">
-        select type,count(1) as numCount from num_item  where status = 1 group by type;
+    <select id="selectTypeCount" resultType="com.moon.moon_commons.bean.TypeCountBean">
+        select type,count(1) as numCount from num_item
+        <where>
+            status != 4
+            <if test="param.status != null">
+                and status = 1
+            </if>
+        </where>
+        group by type;
     </select>
 
-    <select id="selectMaxNumByType" resultType="com.moon.moon_commons.bean.TypeCountBean">
-         select type,MAX(num) as numCount from num_item group by type;
+    <select id="selectMaxNum" resultType="java.lang.Integer">
+         select MAX(num) from num_item ;
     </select>
 
+    <select id="getNumList" resultType="com.moon.moon_commons.bean.NumDetailBean">
+         select ni.uuid as uuid,
+          c.name as name,
+          c.mobile as mobile,
+          c.open_id as openId,
+          ni.num as num,
+          ni.status as status,
+          ni.type as type
+         from  num_item ni left join cust_take_info ti on ti.uuid = ni.take_uuid
+         left join customer c  on c.uuid = ti.cust_uuid
+         where status != 4 order by ni.status asc,ni.num asc
+    </select>
+
+    <select id="getByUuid" resultMap="BaseResultMap">
+        select * from num_item where uuid = #{uuid}
+    </select>
 
 </mapper>

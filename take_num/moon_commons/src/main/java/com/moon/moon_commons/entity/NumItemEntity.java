@@ -27,5 +27,9 @@ public class NumItemEntity {
 
     private  String takeUuid;
 
-    private Date CreateTime;
+    private Date createTime;
+
+    private  Date updateTime;
+
+    private  Date lastUpdTime;
 }

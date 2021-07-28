@@ -111,6 +111,7 @@
             <artifactId>fastjson</artifactId>
             <version>1.2.47</version>
         </dependency>
+
     </dependencies>
 
     <modules>

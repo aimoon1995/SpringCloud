@@ -196,7 +196,12 @@ mybatis:
   type-aliases-package: com.moon.moon_commons.entity
   mapper-locations:
     - classpath:mybatis/mapper/**/*.xml
-
+#分页插件
+pagehelper:
+  helperDialect: mysql
+  reasonable: true
+  supportMethodsArguments: true
+  params: count=countSql
 #日志配置
 logging:
   config: classpath:logback-spring.xml
