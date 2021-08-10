@@ -2,6 +2,8 @@ package com.moon.moon_commons.bean;
 
 import lombok.Data;
 
+import java.util.Date;
+
 /**
  * @ClassName NumDetailBean
  * @Description: TODO
@@ -45,6 +47,11 @@ public class NumDetailBean {
      * openId
      */
     private  String openId;
+
+    /**
+     * num修改时间
+     */
+    private Date updateTime;
 
 
 }

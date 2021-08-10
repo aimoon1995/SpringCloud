@@ -3,9 +3,9 @@ package com.moon.accept_num.controller;
 import com.alibaba.fastjson.JSONObject;
 import com.moon.accept_num.service.TakeNumService;
 import com.moon.moon_commons.constants.CommonConstants;
+import com.moon.moon_commons.entity.CustomerEntity;
 import com.moon.moon_commons.util.ResponseBean;
 import com.moon.moon_commons.util.StringUtil;
-import com.moon.moon_commons.util.WxSendMsgUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
@@ -58,7 +58,7 @@ public class CustomerController {
         return ResponseBean.createSuccess("", JSONObject.parseObject(responseEntity.getBody().toString()));
     }
 
-    public  ResponseEntity getForm(String url) throws HttpClientErrorException, IOException {
+    private   ResponseEntity getForm(String url) throws HttpClientErrorException, IOException {
         try {
             //  输出结果
             ResponseEntity<String> forEntity = restTemplate.getForEntity(url, String.class);
@@ -67,6 +67,23 @@ public class CustomerController {
             throw e;
         }
     }
+
+    /**
+     * @return
+     * @Author zyl
+     * @Description 查看用户前面还有多少人排队
+     * @Date 2021/7/9
+     **/
+    @RequestMapping("/getUser")
+    @ResponseBody
+    public ResponseBean getUser(
+            @RequestParam String openId
+    ) {
+        CustomerEntity customerEntity = takeNumService.getUser(openId);
+        return ResponseBean.createSuccess("", customerEntity);
+    }
+
+
     /**
      * @return
      * @Author zyl
@@ -81,7 +98,6 @@ public class CustomerController {
         Map typeCountBeans = takeNumService.getTypeCount(serMap);
         return ResponseBean.createSuccess("", typeCountBeans);
     }
-
 
     /**
      * 取号

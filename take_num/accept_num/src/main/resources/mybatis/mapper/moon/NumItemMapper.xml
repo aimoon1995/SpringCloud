@@ -7,7 +7,7 @@
         <id column="uuid" jdbcType="VARCHAR" property="uuid"/>
         <result column="num" jdbcType="INTEGER" property="num"/>
         <result column="status" jdbcType="INTEGER" property="status"/>
-        <result column="type" jdbcType="INTEGER" property="status"/>
+        <result column="type" jdbcType="INTEGER" property="type"/>
         <result column="take_uuid" jdbcType="VARCHAR" property="takeUuid"/>
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
         <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
@@ -50,6 +50,9 @@
             <if test="param.createTime != null">
                 create_time,
             </if>
+            <if test="param.updateTime != null">
+                update_time,
+            </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="param.uuid != null">
@@ -69,6 +72,9 @@
             </if>
             <if test="param.createTime != null">
                 #{param.createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="param.updateTime != null">
+                update_time = #{param.updateTime,jdbcType=TIMESTAMP},
             </if>
         </trim>
     </insert>
@@ -154,7 +160,7 @@
         <where>
             status != 4
             <if test="param.status != null">
-                and status = 1
+                and status = 2
             </if>
         </where>
         group by type;
@@ -166,7 +172,7 @@
 
     <select id="getNumList" resultType="com.moon.moon_commons.bean.NumDetailBean">
          select ni.uuid as uuid,
-          c.name as name,
+          ti.name as name,
           c.mobile as mobile,
           c.open_id as openId,
           ni.num as num,
@@ -177,8 +183,59 @@
          where status != 4 order by ni.status asc,ni.num asc
     </select>
 
+
+    <select id="getNumInfo" resultType="com.moon.moon_commons.bean.NumDetailBean">
+        select ni.uuid as uuid,
+          ti.name as name,
+          c.mobile as mobile,
+          c.open_id as openId,
+          ni.num as num,
+          ni.status as status,
+          ni.type as type,
+          ni.update_time as updateTime
+         from  num_item ni left join cust_take_info ti on ti.uuid = ni.take_uuid
+         left join customer c  on c.uuid = ti.cust_uuid
+          <where>
+           <if test="param.uuid != null">
+               ni.uuid = #{param.uuid}
+           </if>
+          </where>
+    </select>
+
+
     <select id="getByUuid" resultMap="BaseResultMap">
         select * from num_item where uuid = #{uuid}
     </select>
+
+    <select id="getWaitNums" resultType="com.moon.moon_commons.bean.NumDetailBean">
+         select ni.uuid as uuid,
+          ti.name as name,
+          c.mobile as mobile,
+          c.open_id as openId,
+          ni.num as num,
+          ni.status as status,
+          ni.type as type,
+          ni.update_time as updateTime
+         from  num_item ni left join cust_take_info ti on ti.uuid = ni.take_uuid
+         left join customer c  on c.uuid = ti.cust_uuid
+         where ni.status = 2  order by ni.num asc
+    </select>
+
+
+    <select id="getFrontDoingNums" resultType="com.moon.moon_commons.bean.NumDetailBean">
+         select ni.uuid as uuid,
+          ti.name as name,
+          c.mobile as mobile,
+          c.open_id as openId,
+          ni.num as num,
+          ni.status as status,
+          ni.type as type,
+          ni.update_time as updateTime
+         from  num_item ni left join cust_take_info ti on ti.uuid = ni.take_uuid
+         left join customer c  on c.uuid = ti.cust_uuid
+         where status = 1  and ni.num &lt; ${num} order by ni.num asc
+    </select>
+
+
 
 </mapper>

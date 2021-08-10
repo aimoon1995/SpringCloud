@@ -29,6 +29,7 @@ public interface NumItemMapper {
     List<Integer> selectUseAbleNums(String openId);
 
     Integer selectMaxNum();
+
     /**
      * @param
      * @return java.util.List<com.moon.moon_commons.bean.NumDetailBean>
@@ -38,7 +39,26 @@ public interface NumItemMapper {
      **/
     List<NumDetailBean> getNumList();
 
-    NumItemEntity getByUuid(@Param("uuid")String uuid);
+    NumItemEntity getByUuid(@Param("uuid") String uuid);
 
     int update(NumItemEntity numItemEntity);
+
+    /**
+     * @return java.util.List<com.moon.moon_commons.entity.NumItemEntity>
+     * @Author zyl
+     * @Description 查询后续未开始的号数相关信息
+     * @Date 2021/8/9
+     **/
+    List<NumDetailBean> getWaitNums();
+
+    /**
+     * @param srhMap
+     * @return com.moon.moon_commons.bean.NumDetailBean
+     * @Author zyl
+     * @Description 查询具体信息
+     * @Date 2021/8/9
+     **/
+    NumDetailBean getNumInfo(@Param("param") Map srhMap);
+
+    List<NumDetailBean> getFrontDoingNums(@Param("num") Integer num);
 }

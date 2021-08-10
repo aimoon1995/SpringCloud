@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -72,8 +73,9 @@ public class ShopperController {
      */
     @RequestMapping("/start")
     @ResponseBody
-    public ResponseBean start(@RequestParam String uuid) {
-        return  takeNumService.start(uuid);
+    public ResponseBean start(@RequestParam String uuid,
+                              @RequestParam String openId) throws IOException {
+        return  takeNumService.start(uuid,openId);
     }
 
     /**
@@ -81,12 +83,19 @@ public class ShopperController {
      */
     @RequestMapping("/complete")
     @ResponseBody
-    public ResponseBean complete(@RequestParam String uuid) {
+    public ResponseBean complete(@RequestParam String uuid) throws IOException {
         return  takeNumService.complete(uuid);
     }
     /**
      * 作废
      */
-
+    /**
+     * 完成
+     */
+    @RequestMapping("/invalidate")
+    @ResponseBody
+    public ResponseBean invalidate(@RequestParam String uuid) throws IOException {
+        return  takeNumService.invalidate(uuid);
+    }
 
 }

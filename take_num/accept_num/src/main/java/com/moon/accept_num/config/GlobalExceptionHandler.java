@@ -37,10 +37,10 @@ public class GlobalExceptionHandler {
         response.setContentType("application/json; charset=UTF-8");
         PrintWriter out = response.getWriter();
         if (e instanceof ResultException) {
-            log.error("ResultException  e.getStackTrace() :{}", Arrays.toString(e.getStackTrace()));
+            log.error("ResultException  e.getStackTrace() :{}", e);
             out.print(createJsonObject(((ResultException) e).getErrorCode(), ((ResultException) e).getMsg(), null, false));
         } else {
-            log.error("ResultException  e.getStackTrace() :{}", Arrays.toString(e.getStackTrace()));
+            log.error("ResultException  e.getStackTrace() :{}", e);
             out.print(createJsonObject(1000, "server error", null, false));
         }
 //        else if (e instanceof MissingServletRequestParameterException) {
