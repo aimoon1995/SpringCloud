@@ -1,5 +1,6 @@
 package com.moon.accept_num.service;
 
+import com.alibaba.fastjson.JSONObject;
 import com.moon.accept_num.config.AppConfig;
 import com.moon.accept_num.mapper.CustTakeInfoMapper;
 import com.moon.accept_num.mapper.CustomerMapper;
@@ -227,6 +228,7 @@ public class TakeNumService {
         m.put("thing6", new TemplateDataVo("尾号"+numDetailBean.getMobile().substring(numDetailBean.getMobile().length()-4)+"——"+numDetailBean.getName()));
         wxMssVo.setData(m);
         WxSendMsgUtil wxSendMsgUtil = new WxSendMsgUtil();
+        log.info("点击开始的时候给当前号主推送->{}", JSONObject.toJSONString(wxMssVo));
         wxSendMsgUtil.push(wxMssVo);
         // 给后面1个未开始的号用户推送即将开始的消息
         List<NumDetailBean> nums = numItemMapper.getWaitNums();
@@ -242,13 +244,14 @@ public class TakeNumService {
                     if (waitNum < 0) {
                         waitNum = 0;
                     }
-                    wxMssVo.setTouser(numDetailBean.getOpenId());//用户的openid（要发送给那个用户，通常这里应该动态传进来的）
+                    wxMssVo.setTouser(detailBean.getOpenId());//用户的openid（要发送给那个用户，通常这里应该动态传进来的）
                     m.put("thing1", new TemplateDataVo(itemEntity.getNum().toString() + "  号"));
                     m.put("thing2", new TemplateDataVo(detailBean.getNum().toString() + "  号"));
                     m.put("thing3", new TemplateDataVo(waitNum+""));
                     m.put("thing4", new TemplateDataVo("即将排到您的号数,请做好准备..."));
                     m.put("thing6", new TemplateDataVo("尾号"+detailBean.getMobile().substring(detailBean.getMobile().length()-4)+"——"+detailBean.getName()));
                     wxMssVo.setData(m);
+                    log.info("点击开始的时候给下一个号主推送->{}", JSONObject.toJSONString(wxMssVo));
                     wxSendMsgUtil.push(wxMssVo);
                 }
             }
@@ -326,6 +329,8 @@ public class TakeNumService {
                     m.put("thing4", new TemplateDataVo(remark));
                     m.put("thing6", new TemplateDataVo("尾号"+numDetailBean.getMobile().substring(numDetailBean.getMobile().length()-4)+"——"+numDetailBean.getName()));
                     wxMssVo.setData(m);
+                    log.info("点击完成的时候给下一个号主推送->{}", JSONObject.toJSONString(wxMssVo));
+
                     wxSendMsgUtil.push(wxMssVo);
                 } else if (i > 0 && i <= 2) {
                     remark = "即将排到您的号数,请做好准备...";
@@ -340,6 +345,7 @@ public class TakeNumService {
                     m.put("thing4", new TemplateDataVo(remark));
                     m.put("thing6", new TemplateDataVo("尾号"+numDetailBean.getMobile().substring(numDetailBean.getMobile().length()-4)+"——"+numDetailBean.getName()));
                     wxMssVo.setData(m);
+                    log.info("点击完成的时候给下2个号主推送->{}", JSONObject.toJSONString(wxMssVo));
                     wxSendMsgUtil.push(wxMssVo);
                 } else {
                     break;
@@ -421,6 +427,7 @@ public class TakeNumService {
                     m.put("thing4", new TemplateDataVo(remark));
                     m.put("thing6", new TemplateDataVo("尾号"+numDetailBean.getMobile().substring(numDetailBean.getMobile().length()-4)+"——"+numDetailBean.getName()));
                     wxMssVo.setData(m);
+                    log.info("点击完成的时候给下一个号主推送->{}", JSONObject.toJSONString(wxMssVo));
                     wxSendMsgUtil.push(wxMssVo);
                 } else if (i > 0 && i <= 2) {
                     remark = "即将排到您的号数,请做好准备...";
@@ -435,6 +442,7 @@ public class TakeNumService {
                     m.put("thing4", new TemplateDataVo(remark));
                     m.put("thing6", new TemplateDataVo("尾号"+numDetailBean.getMobile().substring(numDetailBean.getMobile().length()-4)+"——"+numDetailBean.getName()));
                     wxMssVo.setData(m);
+                    log.info("点击完成的时候给下2个号主推送->{}", JSONObject.toJSONString(wxMssVo));
                     wxSendMsgUtil.push(wxMssVo);
                 } else {
                     break;

@@ -79,7 +79,9 @@ public class CustomerController {
     public ResponseBean getUser(
             @RequestParam String openId
     ) {
+        log.info("getUser openId->{}",openId);
         CustomerEntity customerEntity = takeNumService.getUser(openId);
+        log.info("getUser ->{}",JSONObject.toJSONString(customerEntity));
         return ResponseBean.createSuccess("", customerEntity);
     }
 

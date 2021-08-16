@@ -178,3 +178,9 @@ logging:
   # redisson lock
 redisson.address: redis://127.0.0.1:6379
 redisson.password: rEdiS999
+
+config:
+  num:
+    wxAppid: wx6a81be5a43c7c94d
+    wxAppSecret: 21f24b17e4f48bd570b0a908e37df915
+    templeteId: F-gd0nI4EJNRHmIlYIk-lnO3MNlYK8ZeFiuvr9yMFf8

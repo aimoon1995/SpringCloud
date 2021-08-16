@@ -14,9 +14,9 @@ public interface CommonConstants {
 
     public static final String defaultPageNum = "1";
 
-    public  static  final Integer   PERM_TYPE = 1;
+    public  static  final Integer   PERM_TYPE = 2;
 
-    public  static  final Integer   HAIR_TYPE = 2;
+    public  static  final Integer   HAIR_TYPE = 1;
 
     /**
      * 状态  2未开始 1进行中 3已完成 4已作废
