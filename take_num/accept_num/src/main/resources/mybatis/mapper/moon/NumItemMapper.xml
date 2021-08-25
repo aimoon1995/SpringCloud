@@ -180,7 +180,7 @@
           ni.type as type
          from  num_item ni left join cust_take_info ti on ti.uuid = ni.take_uuid
          left join customer c  on c.uuid = ti.cust_uuid
-         where status != 4 order by ni.status asc,ni.num asc
+         where status = 1 or status = 2 order by ni.status asc,ni.num asc
     </select>
 
 

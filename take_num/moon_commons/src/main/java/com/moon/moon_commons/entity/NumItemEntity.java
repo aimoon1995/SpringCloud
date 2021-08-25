@@ -1,5 +1,6 @@
 package com.moon.moon_commons.entity;
 
+
 import lombok.Data;
 
 import java.util.Date;

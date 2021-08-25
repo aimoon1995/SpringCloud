@@ -53,18 +53,10 @@ public class ShopperController {
     @ResponseBody
     public ResponseBean getList(@RequestParam(defaultValue = CommonConstants.defaultPageNum) Integer pageNum,
                                 @RequestParam(defaultValue = CommonConstants.defaultPageSize) Integer pageSize) {
-        if (pageNum < 0 || pageSize > 50 || pageSize < 0) {
-            return ResponseBean.createError("非法参数");
-        }
-        PageHelper.startPage(pageNum, pageSize);
         //查询所有未作废的号
         List<NumDetailBean> beanList = takeNumService.getNumList();
-        PageInfo<NumDetailBean> info = new PageInfo<NumDetailBean>(beanList);
         JSONObject data = new JSONObject();
         data.put("data",beanList);
-        data.put("pageNum", pageNum);
-        data.put("pages", info.getPages());
-        data.put("isLast", (pageNum.equals(info.getPages())||(info.getPages()==0)));
         return ResponseBean.createSuccess("", data);
     }
 

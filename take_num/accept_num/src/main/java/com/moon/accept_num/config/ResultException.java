@@ -14,6 +14,12 @@ public class ResultException extends RuntimeException{
     public ResultException() {
     }
 
+    public ResultException(String msg) {
+        super(String.format("{HttpStatusCode: %s, Details: %s}", 90000, msg));
+        this.msg = msg;
+        this.errorCode = 90000;
+    }
+
     public ResultException(String msg, int errorCode) {
         super(String.format("{HttpStatusCode: %s, Details: %s}", errorCode, msg));
         this.msg = msg;

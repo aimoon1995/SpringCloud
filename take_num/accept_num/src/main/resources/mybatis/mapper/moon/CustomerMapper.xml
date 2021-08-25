@@ -28,10 +28,12 @@
                 and open_id = #{param.openId}
             </if>
         </where>
+        order by create_time asc
+        limit 1
     </select>
 
     <insert id="insert" parameterType="com.moon.moon_commons.entity.CustomerEntity" >
-        insert into customer (uuid,mobile,open_id) values (#{param.uuid},#{param.mobile},#{param.openId})
+        insert into customer (uuid,mobile,open_id,create_time) values (#{param.uuid},#{param.mobile},#{param.openId},#{param.createTime})
     </insert>
 
     <update id="updateDynamic" parameterType="com.moon.moon_commons.entity.CustomerEntity">
