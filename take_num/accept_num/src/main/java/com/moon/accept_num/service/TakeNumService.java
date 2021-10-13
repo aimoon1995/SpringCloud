@@ -12,12 +12,14 @@ import com.moon.moon_commons.constants.CommonConstants;
 import com.moon.moon_commons.entity.CustTakeInfoEntity;
 import com.moon.moon_commons.entity.CustomerEntity;
 import com.moon.moon_commons.entity.NumItemEntity;
+import com.moon.moon_commons.util.DateUtil;
 import com.moon.moon_commons.util.ResponseBean;
 import com.moon.moon_commons.util.UUIDGenerator;
 import com.moon.accept_num.utils.WxSendMsgUtil;
 import com.moon.moon_commons.vo.TemplateDataVo;
 import com.moon.moon_commons.vo.WxMssVo;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -80,7 +82,7 @@ public class TakeNumService {
         //一个号码只能取一次
         int numCount = numItemMapper.selectUseAbleNumCount(mobile);
         if (numCount > 0) {
-            throw  new ResultException("您还有未完成的号，请继续等待");
+            throw new ResultException("您还有未完成的号，请继续等待");
         }
 
         // 1、查询有没有此用户的信息，没有则新增,有则修改
@@ -108,11 +110,12 @@ public class TakeNumService {
         custTakeInfoEntity.setHairCutCount(hairCutCount);
         custTakeInfoMapper.insert(custTakeInfoEntity);
         //3 查询不同类型目前最大的号
-        Integer maxNum = numItemMapper.selectMaxNum();
+        String date = DateUtil.format(new Date(),DateUtil.DATE_FORMAT_DATE_M_1);
+        Integer maxNum = numItemMapper.selectMaxNum(date);
         if (null == maxNum) {
             maxNum = 0;
         }
-        log.info("maxNum->{}",maxNum);
+        log.info("maxNum->{}", maxNum);
         maxNum = maxNum + 1;
         //新增
         if (null != permCount && permCount > 0) {
@@ -125,7 +128,8 @@ public class TakeNumService {
                 numItemEntity.setUpdateTime(new Date());
                 numItemEntity.setTakeUuid(custTakeInfoEntity.getUuid());
                 numItemEntity.setStatus(CommonConstants.TAKE_NUM_STATUS_WAITING);
-                log.info("烫发取号->{}",maxNum);
+                numItemEntity.setDelFlag(CommonConstants.UNDEL);
+                log.info("烫发取号->{}", maxNum);
                 numItemMapper.insert(numItemEntity);
                 maxNum = maxNum + 1;
             }
@@ -140,7 +144,8 @@ public class TakeNumService {
                 numItemEntity.setUpdateTime(new Date());
                 numItemEntity.setTakeUuid(custTakeInfoEntity.getUuid());
                 numItemEntity.setStatus(CommonConstants.TAKE_NUM_STATUS_WAITING);
-                log.info("剪发取号->{}",maxNum);
+                numItemEntity.setDelFlag(CommonConstants.UNDEL);
+                log.info("剪发取号->{}", maxNum);
                 numItemMapper.insert(numItemEntity);
                 maxNum = maxNum + 1;
             }
@@ -194,10 +199,10 @@ public class TakeNumService {
     public ResponseBean start(String uuid, String openId) throws IOException {
         NumItemEntity itemEntity = numItemMapper.getByUuid(uuid);
         if (null == itemEntity) {
-            throw  new ResultException("查询不到此号");
+            throw new ResultException("查询不到此号");
         }
         if (!CommonConstants.TAKE_NUM_STATUS_WAITING.equals(itemEntity.getStatus())) {
-            throw  new ResultException("状态发生变化，请刷新页面");
+            throw new ResultException("状态发生变化，请刷新页面");
         }
         NumItemEntity numItemEntity = new NumItemEntity();
         numItemEntity.setUuid(itemEntity.getUuid());
@@ -205,7 +210,7 @@ public class TakeNumService {
         numItemEntity.setUpdateTime(new Date());
         numItemEntity.setLastUpdTime(itemEntity.getUpdateTime());
         if (numItemMapper.update(numItemEntity) < 1) {
-            throw  new ResultException("系统异常");
+            throw new ResultException("系统异常");
         }
         //拼接推送的模版
         WxSendMsgUtil wxSendMsgUtil = new WxSendMsgUtil();
@@ -223,7 +228,7 @@ public class TakeNumService {
 //        备注
 //        {{thing4.DATA}}
         Map srhMap = new HashMap();
-        srhMap.put("uuid",uuid);
+        srhMap.put("uuid", uuid);
         NumDetailBean numDetailBean = numItemMapper.getNumInfo(srhMap);
 //        m.put("thing1", new TemplateDataVo(itemEntity.getNum().toString() + "  号"));
 //        m.put("thing2", new TemplateDataVo(itemEntity.getNum().toString() + "  号"));
@@ -237,34 +242,29 @@ public class TakeNumService {
         // 给后面1个未开始的号用户推送即将开始的消息
         List<NumDetailBean> nums = numItemMapper.getWaitNums();
         if (nums.size() > 0) {
-            for (int i = 0; i < nums.size(); i++) {
-                if (i > 0) {
-                    break;
-                } else {
-                    //发送即将开始的信息
-                    NumDetailBean detailBean = nums.get(i);
-                    m.clear();
-                    int waitNum = detailBean.getNum()-itemEntity.getNum()-1;
-                    if (waitNum < 0) {
-                        waitNum = 0;
-                    }
-                    wxMssVo.setTouser(detailBean.getOpenId());//用户的openid（要发送给那个用户，通常这里应该动态传进来的）
-                    m.put("thing1", new TemplateDataVo(itemEntity.getNum().toString() + "  号"));
-                    m.put("thing2", new TemplateDataVo(detailBean.getNum().toString() + "  号"));
-                    m.put("thing3", new TemplateDataVo(waitNum+""));
-                    m.put("thing4", new TemplateDataVo("即将排到您的号数,请做好准备..."));
-                    m.put("thing6", new TemplateDataVo("尾号"+detailBean.getMobile().substring(detailBean.getMobile().length()-4)+"——"+detailBean.getName()));
-                    wxMssVo.setData(m);
-                    log.info("点击开始的时候给下一个号主推送->{}", JSONObject.toJSONString(wxMssVo));
-                    wxSendMsgUtil.push(wxMssVo);
+            for (NumDetailBean detailBean : nums) {
+                //发送即将开始的信息
+                m.clear();
+                int waitNum = detailBean.getNum() - itemEntity.getNum();
+                if (waitNum < 0) {
+                    waitNum = 0;
                 }
+                wxMssVo.setTouser(detailBean.getOpenId());//用户的openid（要发送给那个用户，通常这里应该动态传进来的）
+                m.put("thing1", new TemplateDataVo(itemEntity.getNum().toString() + "  号"));
+                m.put("thing2", new TemplateDataVo(detailBean.getNum().toString() + "  号"));
+                m.put("thing3", new TemplateDataVo(waitNum + ""));
+                m.put("thing4", new TemplateDataVo("即将排到您的号数,请做好准备..."));
+                m.put("thing6", new TemplateDataVo("尾号" + detailBean.getMobile().substring(detailBean.getMobile().length() - 4) + "——" + detailBean.getName()));
+                wxMssVo.setData(m);
+                log.info("点击开始的时候给下一个号主推送->{}", JSONObject.toJSONString(wxMssVo));
+                wxSendMsgUtil.push(wxMssVo);
+                break;
             }
         }
         return ResponseBean.createSuccess("操作成功");
     }
 
     /**
-     *
      * @param uuid
      * @return com.moon.moon_commons.util.ResponseBean
      * @Author zyl
@@ -272,14 +272,14 @@ public class TakeNumService {
      * @Date 2021/7/28
      **/
     @Transactional(rollbackFor = RuntimeException.class)
-    public ResponseBean complete( String uuid) throws IOException {
+    public ResponseBean complete(String uuid) throws IOException {
         Date sysDate = new Date();
         NumItemEntity itemEntity = numItemMapper.getByUuid(uuid);
         if (null == itemEntity) {
-            throw  new ResultException("查询不到此号");
+            throw new ResultException("查询不到此号");
         }
         if (!CommonConstants.TAKE_NUM_STATUS_DOING.equals(itemEntity.getStatus())) {
-            throw  new ResultException("状态发生变化，请刷新页面");
+            throw new ResultException("状态发生变化，请刷新页面");
         }
         NumItemEntity numItemEntity = new NumItemEntity();
         numItemEntity.setUuid(itemEntity.getUuid());
@@ -287,7 +287,7 @@ public class TakeNumService {
         numItemEntity.setUpdateTime(sysDate);
         numItemEntity.setLastUpdTime(itemEntity.getUpdateTime());
         if (numItemMapper.update(numItemEntity) < 1) {
-            throw  new ResultException("系统异常");
+            throw new ResultException("系统异常");
         }
         //给下一个num的状态改为开始
         //给后面两个号推送微信消息
@@ -298,36 +298,37 @@ public class TakeNumService {
         Map<String, TemplateDataVo> m = new HashMap<>(3);
         int currentNum = 0;
         if (beanList.size() > 0) {
-            NumDetailBean numDetailBean = null;
-            for (int i = 0; i < beanList.size(); i++) {
-                numDetailBean = beanList.get(i);
+            for (NumDetailBean numDetailBean : beanList) {
+                currentNum = numDetailBean.getNum();
                 wxMssVo.setTouser(numDetailBean.getOpenId());//用户的openid（要发送给那个用户，通常这里应该动态传进来的）
-                NumItemEntity entity = new NumItemEntity();
-                String remark = "已排到您的号数,请做好准备...";
-                if (i == 0) {
-                    currentNum = numDetailBean.getNum();
-                    m.clear();
-                    m.put("thing1", new TemplateDataVo(currentNum+ "  号"));
-                    m.put("thing2", new TemplateDataVo(entity.getNum().toString() + "  号"));
-                    m.put("thing3", new TemplateDataVo((numDetailBean.getNum()-currentNum)+"号" ));
-                    m.put("thing4", new TemplateDataVo(remark));
-                    m.put("thing6", new TemplateDataVo("尾号"+numDetailBean.getMobile().substring(numDetailBean.getMobile().length()-4)+"——"+numDetailBean.getName()));
-                    wxMssVo.setData(m);
-                    log.info("点击完成的时候给下一个号主推送->{}", JSONObject.toJSONString(wxMssVo));
-                    WxSendMsgUtil wxSendMsgUtil = new WxSendMsgUtil();
-                    wxSendMsgUtil.push(wxMssVo);
-                }else {
-                    break;
+                String thing1 = currentNum + "  号";
+                String thing2 = currentNum + "  号";
+                String thing3 = (numDetailBean.getNum() - currentNum) + "号";
+                String remark = "请做好准备...";
+                //查询正在进行中的号
+                List<NumDetailBean> doings = numItemMapper.getFrontDoingNums(currentNum);
+                if (doings.size() > 0) {
+                    thing1 = doings.get(0).getNum()+ "  号";
+                    thing3 = (((currentNum - doings.get(0).getNum()) < 0)?0:(currentNum - doings.get(0).getNum()))+"号";
                 }
+                m.clear();
+                m.put("thing1", new TemplateDataVo(thing1));
+                m.put("thing2", new TemplateDataVo(thing2));
+                m.put("thing3", new TemplateDataVo(thing3));
+                m.put("thing4", new TemplateDataVo(remark));
+                m.put("thing6", new TemplateDataVo("尾号" + numDetailBean.getMobile().substring(numDetailBean.getMobile().length() - 4) + "——" + numDetailBean.getName()));
+                wxMssVo.setData(m);
+                log.info("点击完成的时候给下一个号主推送->{}", JSONObject.toJSONString(wxMssVo));
+                WxSendMsgUtil wxSendMsgUtil = new WxSendMsgUtil();
+                wxSendMsgUtil.push(wxMssVo);
+                break;
             }
         }
         return ResponseBean.createSuccess("操作成功");
     }
 
 
-
     /**
-     *
      * @param uuid
      * @return com.moon.moon_commons.util.ResponseBean
      * @Author zyl
@@ -339,10 +340,10 @@ public class TakeNumService {
         Date sysDate = new Date();
         NumItemEntity itemEntity = numItemMapper.getByUuid(uuid);
         if (null == itemEntity) {
-            throw  new ResultException("查询不到此号");
+            throw new ResultException("查询不到此号");
         }
         if (CommonConstants.TAKE_NUM_STATUS_CANCELED.equals(itemEntity.getStatus())) {
-            throw  new ResultException("状态发生变化，请刷新页面");
+            throw new ResultException("状态发生变化，请刷新页面");
         }
         NumItemEntity numItemEntity = new NumItemEntity();
         numItemEntity.setUuid(itemEntity.getUuid());
@@ -350,38 +351,41 @@ public class TakeNumService {
         numItemEntity.setUpdateTime(new Date());
         numItemEntity.setLastUpdTime(itemEntity.getUpdateTime());
         if (numItemMapper.update(numItemEntity) < 1) {
-            throw  new ResultException("系统异常");
+            throw new ResultException("系统异常");
         }
-        //给下一个num的状态改为开始
         List<NumDetailBean> beanList = numItemMapper.getWaitNums();
         WxMssVo wxMssVo = new WxMssVo();
         wxMssVo.setTemplate_id(AppConfig.getTempleteId());//订阅消息模板id
         wxMssVo.setPage("pages/take/take");
         Map<String, TemplateDataVo> m = new HashMap<>(3);
         if (beanList.size() > 0) {
-            NumDetailBean numDetailBean = null;
             WxSendMsgUtil wxSendMsgUtil = new WxSendMsgUtil();
             int currentNum = 0;
-            for (int i = 0; i < beanList.size(); i++) {
-                numDetailBean = beanList.get(i);
+            for (NumDetailBean numDetailBean : beanList) {
                 wxMssVo.setTouser(numDetailBean.getOpenId());//用户的openid（要发送给那个用户，通常这里应该动态传进来的）
-                NumItemEntity entity = new NumItemEntity();
                 String remark = "即将排到您的号数,请做好准备...";
-                if (i == 0) {
-                   remark = "已排到您的号数,请做好准备...";
-                   currentNum = numDetailBean.getNum();
-                    m.clear();
-                    m.put("thing1", new TemplateDataVo(currentNum+ "  号"));
-                    m.put("thing2", new TemplateDataVo(entity.getNum().toString() + "  号"));
-                    m.put("thing3", new TemplateDataVo((numDetailBean.getNum()-currentNum)+"号" ));
-                    m.put("thing4", new TemplateDataVo(remark));
-                    m.put("thing6", new TemplateDataVo("尾号"+numDetailBean.getMobile().substring(numDetailBean.getMobile().length()-4)+"——"+numDetailBean.getName()));
-                    wxMssVo.setData(m);
-                    log.info("点击完成的时候给下一个号主推送->{}", JSONObject.toJSONString(wxMssVo));
-                    wxSendMsgUtil.push(wxMssVo);
-                } else {
-                    break;
+                remark = "请做好准备...";
+                currentNum = numDetailBean.getNum();
+                wxMssVo.setTouser(numDetailBean.getOpenId());//用户的openid（要发送给那个用户，通常这里应该动态传进来的）
+                String thing1 = currentNum + "  号";
+                String thing2 = currentNum + "  号";
+                String thing3 = (numDetailBean.getNum() - currentNum) + "号";
+                //查询正在进行中的号
+                List<NumDetailBean> doings = numItemMapper.getFrontDoingNums(currentNum);
+                if (doings.size() > 0) {
+                    thing1 = doings.get(0).getNum()+ "  号";
+                    thing3 = (((currentNum - doings.get(0).getNum()) < 0)?0:(currentNum - doings.get(0).getNum()))+"号";
                 }
+                m.clear();
+                m.put("thing1", new TemplateDataVo(thing1));
+                m.put("thing2", new TemplateDataVo(thing2));
+                m.put("thing3", new TemplateDataVo(thing3));
+                m.put("thing4", new TemplateDataVo(remark));
+                m.put("thing6", new TemplateDataVo("尾号" + numDetailBean.getMobile().substring(numDetailBean.getMobile().length() - 4) + "——" + numDetailBean.getName()));
+                wxMssVo.setData(m);
+                log.info("点击完成的时候给下一个号主推送->{}", JSONObject.toJSONString(wxMssVo));
+                wxSendMsgUtil.push(wxMssVo);
+                break;
             }
         }
         return ResponseBean.createSuccess("操作成功");

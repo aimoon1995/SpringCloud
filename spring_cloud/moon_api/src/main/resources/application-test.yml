@@ -71,7 +71,35 @@ spring:
       pool-prepared-statements: true
       max-open-prepared-statements: 50
       max-pool-prepared-statement-per-connection-size: 20
-#  cloud:
+  cloud:
+    consul:
+      #配置端口
+      port: 8500
+      #配置consul服务器的host
+        host: 47.104.250.22
+      discovery:
+        #配置服务注册
+        register: true
+        #是否启用服务发现
+        enabled: true
+        #服务停止时取消注册
+        deregister: true
+        #表示注册时不使用ip是hostname
+        prefer-ip-address: false
+        service-name: ${spring.application.name}
+        hostname: ${spring.cloud.client.ip-address}
+        #        instance-id: ${spring.application.name}:${spring.cloud.client.ip-address}:${server.port}
+        #配置健康检查时间间隔
+        health-check-interval: 10s
+        #健康检查失败多长时间取消注册
+        health-check-critical-timeout: 30s
+        tags: api
+        #配置健康检查路径
+        health-check-path: ${server.servlet.context-path}/actuator/health
+        instance-id: ${spring.application.name}:${spring.cloud.client.ip-address}:${server.port} #实例ID
+        loadbalancer:
+          ribbon:
+            enabled: false
 #    zookeeper:
 #      connect-string: 192.168.100.238:12181
 #      enabled: true
@@ -112,35 +140,8 @@ redis:
 #  endpoint:
 #    health:
 #      show-details: always
+#
 
-  #     consul:
-  #       #配置端口
-  #       port: 8500
-  #       #配置consul服务器的host
-  #       host: 127.0.0.1
-  #       discovery:
-  #         #配置服务注册
-  #         register: true
-  #         #是否启用服务发现
-  #         enabled: true
-  #         #服务停止时取消注册
-  #         deregister: true
-  #         #表示注册时不使用ip是hostname
-  #         prefer-ip-address: false
-  #         service-name: ${spring.application.name}
-  #         hostname: ${spring.cloud.client.ip-address}
-  #         #        instance-id: ${spring.application.name}:${spring.cloud.client.ip-address}:${server.port}
-  #         #配置健康检查时间间隔
-  #         health-check-interval: 10s
-  #         #健康检查失败多长时间取消注册
-  #         health-check-critical-timeout: 30s
-  #         tags: api
-  #         #配置健康检查路径
-  #         health-check-path: ${server.servlet.context-path}/actuator/health
-  #         instance-id: ${spring.application.name}:${spring.cloud.client.ip-address}:${server.port} #实例ID
-  #         loadbalancer:
-  #           ribbon:
-  #             enabled: false
 
   #  # 下面为连接池的补充设置，应用到上面所有数据源中
   #  initial-size: 5

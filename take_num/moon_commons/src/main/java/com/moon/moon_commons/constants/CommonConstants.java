@@ -27,4 +27,11 @@ public interface CommonConstants {
     public  static  final Integer  TAKE_NUM_STATUS_CANCELED = 4;
 
 
+    /**
+     * 删除状态  1未删除 2已删除
+     */
+    public  static  final Integer  UNDEL = 1;
+
+    public  static  final Integer  DELED = 2;
+
 }

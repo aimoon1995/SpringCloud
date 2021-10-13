@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Bean;
 import java.util.Properties;
 
 @SpringBootApplication
-//@EnableDiscoveryClient
+@EnableDiscoveryClient
 @EnableFeignClients
 @MapperScan({"com.moon.moon_api.mapper.moon","com.moon.moon_api.mapper.moonSec"})
 public class MoonApiApplication {

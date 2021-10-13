@@ -28,7 +28,7 @@ public interface NumItemMapper {
 
     List<Integer> selectUseAbleNums(String openId);
 
-    Integer selectMaxNum();
+    Integer selectMaxNum(@Param("date")String date);
 
     /**
      * @param
@@ -61,4 +61,6 @@ public interface NumItemMapper {
     NumDetailBean getNumInfo(@Param("param") Map srhMap);
 
     List<NumDetailBean> getFrontDoingNums(@Param("num") Integer num);
+
+    List<NumItemEntity> getAllUnDelData();
 }

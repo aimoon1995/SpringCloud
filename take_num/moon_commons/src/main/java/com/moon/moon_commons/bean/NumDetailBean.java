@@ -53,5 +53,10 @@ public class NumDetailBean {
      */
     private Date updateTime;
 
+    /**
+     *
+     */
+    private  Integer delFlag;
+
 
 }

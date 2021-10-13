@@ -26,6 +26,12 @@ public class NumItemEntity {
      */
     private  Integer status;
 
+
+    /**
+     * 1未删除  2已删除
+     */
+    private  Integer delFlag;
+
     private  String takeUuid;
 
     private Date createTime;

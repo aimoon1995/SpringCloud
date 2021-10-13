@@ -1,0 +1,34 @@
+server:
+  port: 8889
+spring:
+  application:
+    name: moon-consul
+  cloud:
+    consul:
+      enabled: true
+      port: 8500
+      host: 47.104.250.22
+      discovery:
+        register: true
+        enabled: true
+        #服务停止时取消注册
+        deregister: true
+        #表示注册时不使用ip是hostname
+        prefer-ip-address: false
+        service-name: ${spring.application.name}
+        hostname: ${spring.cloud.client.ip-address}
+        #        instance-id: ${spring.application.name}:${spring.cloud.client.ip-address}:${server.port}
+        register-health-check: false
+        #配置健康检查时间间隔
+        health-check-interval: 10s
+        #健康检查失败多长时间取消注册
+        health-check-critical-timeout: 30s
+        tags: moon-consul
+        #配置健康检查路径
+        health-check-path: /actuator/health
+        instance-id: ${spring.application.name}:${spring.cloud.client.ip-address}:${server.port} #实例ID
+
+management:
+  endpoint:
+    health:
+      show-details: always
